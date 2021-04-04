@@ -9,3 +9,5 @@ class ClickController:
             pos = pygame.mouse.get_pos()
             if event.button == 1:
                 view.add_element(Node(pos[0], pos[1]))
+            elif event.button == 3:
+                view.remove_element(pos)

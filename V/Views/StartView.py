@@ -15,3 +15,7 @@ class StartView:
 
     def add_element(self, sprite: pygame.sprite.Sprite):
         self.sprites.append(sprite)
+
+    def remove_element(self, pos):
+        clicked_sprites = [s for s in self.sprites if s.rect.collidepoint(pos)]
+        self.sprites.remove(clicked_sprites)
