@@ -2,6 +2,7 @@ import pygame
 
 from M.Node import Node
 from V.Views.StartView import StartView
+from V.Views.DijkstraView import DijkstraView
 from C.ClickControler import ClickController
 
 
@@ -10,7 +11,7 @@ class ViewChanger:
     def __init__(self):
         self.actualView = 0
         self.views = []
-        self.views.append(StartView())
+        self.views.append(DijkstraView())
         self.exit_button_was_clicked = False
         self.clickControler = ClickController()
 

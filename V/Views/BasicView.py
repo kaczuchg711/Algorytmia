@@ -1,9 +1,6 @@
-import pygame
-
-from V.Views.BasicView import BasicView
-
-
-class StartView(BasicView):
+class BasicView:
+    def __init__(self):
+        self.sprites = []
 
     def drawElements(self, surface):
         for element in self.sprites:
