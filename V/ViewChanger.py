@@ -9,9 +9,8 @@ from static import ScreenHeight, ScreenWith
 class ViewChanger:
 
     def __init__(self):
-        self.actualView = 0
-        self.views = []
-        self.views.append(DijkstraView())
+        self.views = {"StartView": StartView(self)}
+        self.actualView = self.views["StartView"]
         self.exit_button_was_clicked = False
 
     def display(self):
@@ -22,15 +21,15 @@ class ViewChanger:
         while not self.exit_button_was_clicked:
             surface.fill((0, 0, 0))
             self.handle_events()
-            self.views[self.actualView].draw_elements(surface)
+            self.actualView.draw_elements(surface)
             pygame.display.flip()
 
         pygame.quit()
 
-    def change_view(self, newViewNumber):
-        self.actualView = newViewNumber
+    def change_view(self, viewName):
+        self.actualView = self.views[viewName]
 
     def handle_events(self):
         for event in pygame.event.get():
             end_program_controller(event, self)
-            self.views[self.actualView].run_controllers(event)
+            self.actualView.run_controllers(event)
