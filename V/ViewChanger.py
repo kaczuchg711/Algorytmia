@@ -22,7 +22,7 @@ class ViewChanger:
         while not self.exit_button_was_clicked:
             surface.fill((0, 0, 0))
             self.handle_events()
-            self.views[self.actualView].drawElements(surface)
+            self.views[self.actualView].draw_elements(surface)
             pygame.display.flip()
 
         pygame.quit()

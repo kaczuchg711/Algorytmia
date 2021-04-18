@@ -8,7 +8,7 @@ class StartView(BasicView):
         super().__init__()
         self.sprites = [Button("siema",10, 10, 100, 100)]
 
-    def drawElements(self, surface):
+    def draw_elements(self, surface):
         for element in self.sprites:
             element.draw(surface)
             element.update()
