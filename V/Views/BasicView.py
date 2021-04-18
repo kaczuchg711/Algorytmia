@@ -4,5 +4,8 @@ class BasicView:
 
     def drawElements(self, surface):
         for element in self.sprites:
-            element.draw(surface)
             element.update()
+            element.draw(surface)
+
+    def run_controllers(self, event):
+        pass
