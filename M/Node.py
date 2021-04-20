@@ -5,17 +5,19 @@ from pygame.sprite import AbstractGroup
 
 
 class Node(pygame.sprite.Sprite):
-    alfabet = ("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "R", "S", "T", "U", "W",
+    alphabet = ("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "R", "S", "T", "U", "W",
                "Y", "Z")
     count = 0
 
     @classmethod
     def incr(cls):
         cls.count += 1
+        if cls.count == 22:
+            cls.count = 0
 
     def __init__(self, x, y):
         super().__init__()
-        self.name = self.alfabet[self.count]
+        self.name = self.alphabet[self.count]
         self.incr()
         self.x = x
         self.y = y
