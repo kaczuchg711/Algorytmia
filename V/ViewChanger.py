@@ -3,7 +3,7 @@ import pygame
 from C.endProgramControler import end_program_controller
 from V.Views.DijkstraView import DijkstraView
 from V.Views.StartView import StartView
-from static import ScreenHeight, ScreenWith
+from static import screen
 
 
 class ViewChanger:
@@ -15,7 +15,7 @@ class ViewChanger:
 
     def display(self):
         pygame.init()
-        size = [ScreenWith, ScreenHeight]
+        size = [screen.rect.width, screen.rect.height]
         surface = pygame.display.set_mode(size)
 
         while not self.exit_button_was_clicked:

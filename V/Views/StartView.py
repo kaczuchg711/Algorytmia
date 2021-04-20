@@ -1,8 +1,9 @@
 import pygame
 
-from M.Button import Button
+from V.elements.TextButton import TextButton
 from V.Views.BasicView import BasicView
 from V.Views.DijkstraView import DijkstraView
+from static import screen
 
 
 class StartView(BasicView):
@@ -11,19 +12,32 @@ class StartView(BasicView):
             if event.type == pygame.MOUSEBUTTONUP:
                 for sprite in view.sprites:
                     x, y = event.pos
-                    print(x, y)
                     if sprite.rect.collidepoint(x, y):
-                        try:
-                            view.changer.change_view("DijkstraView")
-                        except KeyError:
-                            view.changer.views["DijkstraView"] = DijkstraView(view.changer)
-                            view.changer.change_view("DijkstraView")
+                        if sprite.text == "Dijkstra":
+                            try:
+                                view.changer.change_view("DijkstraView")
+                            except KeyError:
+                                view.changer.views["DijkstraView"] = DijkstraView(view.changer)
+                                view.changer.change_view("DijkstraView")
 
     def __init__(self, changer):
         super().__init__()
         self.changer = changer
-        self.sprites = [Button("siema", 10, 10, 100, 100)]
+        self._init_buttons()
         self.controllers = [self.ClickController()]
+
+    def _init_buttons(self):
+        self.sprites = [TextButton("Dijkstra", "Dijkstra", screen.rect.centerx - screen.rect.width * 0.2 / 2,
+                                   screen.rect.centery - screen.rect.height * 0.1 / 2, screen.rect.width * 0.2,
+                                   screen.rect.height * 0.1),
+                        TextButton("cos1", "cos1", screen.rect.centerx - screen.rect.width * 0.2 / 2,
+                                   screen.rect.centery - screen.rect.height * 0.1 / 2 + screen.rect.height * 0.15,
+                                   screen.rect.width * 0.2,
+                                   screen.rect.height * 0.1),
+                        TextButton("cos1", "cos2", screen.rect.centerx - screen.rect.width * 0.2 / 2,
+                                   screen.rect.centery - screen.rect.height * 0.1 / 2 + screen.rect.height * 0.3,
+                                   screen.rect.width * 0.2,
+                                   screen.rect.height * 0.1)]
 
     def draw_elements(self, surface):
         for element in self.sprites:
