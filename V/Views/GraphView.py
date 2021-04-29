@@ -14,11 +14,13 @@ class GraphView(BasicView):
         def __init__(self):
             self.firstSelectedNode = None
             self.lastCreatedEdge = None
+            self.numberWasInput = False
+            self.numberForSetEdgeWeight = str()
 
         def __call__(self, event, view):
             # print("w ClickController")
             # # todo Edge weight
-            edgeWasCreated = False
+            edgeWasCreatedInThisCirculation = False
             nodes = [sprite for sprite in view.sprites if isinstance(sprite, Node)]
 
             for node in nodes:
@@ -31,33 +33,30 @@ class GraphView(BasicView):
                         view.sprites.append(FreeText("Input edge weight and press Enter", 10, 10))
                         view.sprites.append(self.lastCreatedEdge)
                         self.firstSelectedNode = None
-                        edgeWasCreated = True
-            #     if self.lastCreatedEdge is not None and self.lastCreatedEdge.weight is None:
-            #         while not self.numberWasInput:
-            #             print("while not self.numberWasInput:")
-            #             for event in pygame.event.get():
-            #                 if event.type == pygame.KEYDOWN:
-            #                     print("Guzik został wciśnięty")
-            #
-            #                     if event.key in numeric_keys:
-            #                         self.numberWasInput = True
-            #                         print("Numeryczny guzik został wciśnięty")
-            #                         self.numberForSetEdgeWeight += (str(numeric_keys_dict[str(event.key)]))
-            #                         print(self.numberForSetEdgeWeight)
-            #
-            #                     keys = pygame.key.get_pressed()
-            #                     if self.numberWasInput and (
-            #                             event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN):
-            #                         print("Enter został wciśnięty")
-            #                         self.lastCreatedEdge.weight = int(self.numberForSetEdgeWeight)
-            #
-            #                         self.numberForSetEdgeWeight = str()
-            #                         self.lastCreatedEdge = None
-            #                         self.numberWasInput = False
-            #
+                        edgeWasCreatedInThisCirculation = True
+
+                if self.lastCreatedEdge is not None and self.lastCreatedEdge.weight is None and not edgeWasCreatedInThisCirculation:
+                    while self.lastCreatedEdge.weight is None:
+                        print("w petli oczekujacej na wprowadzenie liczby i nacisniecie entera")
+                        for event in pygame.event.get():
+                            if event.type == pygame.KEYDOWN:
+                                if event.key in numeric_keys:
+                                    print("Numeryczny guzik został wciśnięty")
+                                    self.numberForSetEdgeWeight += (str(numeric_keys_dict[str(event.key)]))
+                                    print(self.numberForSetEdgeWeight)
+                                    self.numberWasInput = True
+                            #
+                            # keys = pygame.key.get_pressed()
+                            if event.type == pygame.KEYDOWN and self.numberWasInput and (
+                                    event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN):
+                                print("Enter został wciśnięty")
+                                self.lastCreatedEdge.weight = int(self.numberForSetEdgeWeight)
+                                # self.numberForSetEdgeWeight = str()
+                                # self.lastCreatedEdge = None
+                                # self.numberWasInput = True
 
             #
-            if event.type == pygame.MOUSEBUTTONDOWN and self.firstSelectedNode is None and not edgeWasCreated:
+            if event.type == pygame.MOUSEBUTTONDOWN and self.firstSelectedNode is None and not edgeWasCreatedInThisCirculation:
                 pos = pygame.mouse.get_pos()
                 buttons = [button for button in view.sprites if isinstance(button, ImageButton)]
 
