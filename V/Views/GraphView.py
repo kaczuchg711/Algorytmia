@@ -14,50 +14,49 @@ class GraphView(BasicView):
         def __init__(self):
             self.firstSelectedNode = None
             self.lastCreatedEdge = None
-            self.numberForSetEdgeWeight = str()
-            self.numberWasInput = False
 
         def __call__(self, event, view):
-            # todo Edge weight
+            # print("w ClickController")
+            # # todo Edge weight
             edgeWasCreated = False
             nodes = [sprite for sprite in view.sprites if isinstance(sprite, Node)]
 
             for node in nodes:
-                if self.lastCreatedEdge is not None and self.lastCreatedEdge.weight is None:
-                    while not self.numberWasInput:
-                        print("while not self.numberWasInput:")
-                        for event in pygame.event.get():
-                            if event.type == pygame.KEYDOWN:
-                                print("Guzik został wciśnięty")
-
-                                if event.key in numeric_keys:
-                                    self.numberWasInput = True
-                                    print("Numeryczny guzik został wciśnięty")
-                                    self.numberForSetEdgeWeight +=(str(numeric_keys_dict[str(event.key)]))
-                                    print(self.numberForSetEdgeWeight)
-
-
-                                keys = pygame.key.get_pressed()
-                                if self.numberWasInput and (event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN):
-                                    print("Enter został wciśnięty")
-                                    self.lastCreatedEdge.weight = int(self.numberForSetEdgeWeight)
-
-                                    self.numberForSetEdgeWeight = str()
-                                    self.lastCreatedEdge = None
-                                    self.numberWasInput = False
-
-
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and node.rect.collidepoint(
                         event.pos) and view.isInEditMode:
                     if self.firstSelectedNode is None and node is not self.firstSelectedNode:
                         self.firstSelectedNode = node
                     else:
-
                         self.lastCreatedEdge = Edge(self.firstSelectedNode, node)
                         view.sprites.append(FreeText("Input edge weight and press Enter", 10, 10))
                         view.sprites.append(self.lastCreatedEdge)
+                        self.firstSelectedNode = None
+                        edgeWasCreated = True
+            #     if self.lastCreatedEdge is not None and self.lastCreatedEdge.weight is None:
+            #         while not self.numberWasInput:
+            #             print("while not self.numberWasInput:")
+            #             for event in pygame.event.get():
+            #                 if event.type == pygame.KEYDOWN:
+            #                     print("Guzik został wciśnięty")
+            #
+            #                     if event.key in numeric_keys:
+            #                         self.numberWasInput = True
+            #                         print("Numeryczny guzik został wciśnięty")
+            #                         self.numberForSetEdgeWeight += (str(numeric_keys_dict[str(event.key)]))
+            #                         print(self.numberForSetEdgeWeight)
+            #
+            #                     keys = pygame.key.get_pressed()
+            #                     if self.numberWasInput and (
+            #                             event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN):
+            #                         print("Enter został wciśnięty")
+            #                         self.lastCreatedEdge.weight = int(self.numberForSetEdgeWeight)
+            #
+            #                         self.numberForSetEdgeWeight = str()
+            #                         self.lastCreatedEdge = None
+            #                         self.numberWasInput = False
+            #
 
-
+            #
             if event.type == pygame.MOUSEBUTTONDOWN and self.firstSelectedNode is None and not edgeWasCreated:
                 pos = pygame.mouse.get_pos()
                 buttons = [button for button in view.sprites if isinstance(button, ImageButton)]
