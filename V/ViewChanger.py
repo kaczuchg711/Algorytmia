@@ -7,11 +7,12 @@ from static import screen
 
 
 class ViewChanger:
-
     def __init__(self):
         self.views = {"StartView": StartView(self)}
         self.actualView = self.views["StartView"]
         self.exit_button_was_clicked = False
+        size = [screen.rect.width, screen.rect.height]
+        self.surface = pygame.display.set_mode(size)
 
     def display(self):
         pygame.init()
@@ -21,7 +22,7 @@ class ViewChanger:
         while not self.exit_button_was_clicked:
             surface.fill((0, 0, 0))
             self.handle_events()
-            self.actualView.draw_elements(surface)
+            self.actualView.draw_elements()
             pygame.display.flip()
 
         pygame.quit()

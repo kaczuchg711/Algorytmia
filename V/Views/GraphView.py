@@ -4,28 +4,61 @@ from M.Edge import Edge
 from M.Node import Node
 from V.Views.BasicView import BasicView
 from V.elements.Button import Button
+from V.elements.FreeText import FreeText
 from V.elements.ImageButton import ImageButton
-from static import screen
+from static import screen, numeric_keys, numeric_keys_dict
 
 
 class GraphView(BasicView):
     class ClickController:
         def __init__(self):
-            self.first_selected_node = None
+            self.firstSelectedNode = None
+            self.lastCreatedEdge = None
+            self.numberForSetEdgeWeight = str()
+            self.numberWasInput = False
 
         def __call__(self, event, view):
+            # todo Edge weight
             edgeWasCreated = False
             nodes = [sprite for sprite in view.sprites if isinstance(sprite, Node)]
-            for node in nodes:
-                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and node.rect.collidepoint(event.pos) and view.isInEditMode:
-                    if self.first_selected_node is None and node is not self.first_selected_node:
-                        self.first_selected_node = node
-                    else:
-                        view.sprites.append(Edge(self.first_selected_node, node))
-                        edgeWasCreated = True
-                        self.first_selected_node = None
 
-            if event.type == pygame.MOUSEBUTTONDOWN and self.first_selected_node is None and not edgeWasCreated:
+            for node in nodes:
+                if self.lastCreatedEdge is not None and self.lastCreatedEdge.weight is None:
+                    while not self.numberWasInput:
+                        print("while not self.numberWasInput:")
+                        for event in pygame.event.get():
+                            if event.type == pygame.KEYDOWN:
+                                print("Guzik został wciśnięty")
+
+                                if event.key in numeric_keys:
+                                    self.numberWasInput = True
+                                    print("Numeryczny guzik został wciśnięty")
+                                    self.numberForSetEdgeWeight +=(str(numeric_keys_dict[str(event.key)]))
+                                    print(self.numberForSetEdgeWeight)
+
+
+                                keys = pygame.key.get_pressed()
+                                if self.numberWasInput and (event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN):
+                                    print("Enter został wciśnięty")
+                                    self.lastCreatedEdge.weight = int(self.numberForSetEdgeWeight)
+
+                                    self.numberForSetEdgeWeight = str()
+                                    self.lastCreatedEdge = None
+                                    self.numberWasInput = False
+
+
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and node.rect.collidepoint(
+                        event.pos) and view.isInEditMode:
+                    if self.firstSelectedNode is None and node is not self.firstSelectedNode:
+                        self.firstSelectedNode = node
+                    else:
+
+                        self.lastCreatedEdge = Edge(self.firstSelectedNode, node)
+                        view.sprites.append(FreeText("Input edge weight and press Enter", 10, 10))
+                        view.sprites.append(self.lastCreatedEdge)
+
+
+            if event.type == pygame.MOUSEBUTTONDOWN and self.firstSelectedNode is None and not edgeWasCreated:
                 pos = pygame.mouse.get_pos()
                 buttons = [button for button in view.sprites if isinstance(button, ImageButton)]
 
@@ -50,8 +83,8 @@ class GraphView(BasicView):
             elif event.button == 3 and view.isInEditMode:
                 view.remove_element(pos)
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, changer):
+        super().__init__(changer)
         self.controllers = [self.ClickController()]
         editIcon = pygame.image.load('icons\edit_icon.png').convert_alpha()
         editIcon.set_alpha(50)

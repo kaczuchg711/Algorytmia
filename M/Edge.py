@@ -6,7 +6,7 @@ from pygame.sprite import Sprite
 
 
 class Edge(Sprite):
-    class myRect(pygame.Rect):
+    class EdgeRect(pygame.Rect):
         def __init__(self, pos1, pos2):
             self.pos1 = pos1
             self.pos2 = pos2
@@ -17,11 +17,11 @@ class Edge(Sprite):
             x = pos[0]
             y = pos[1]
 
-            if self._check_point_in_rect(pos) and (a * x + b - y > - 10 and a * x + b - y < 10):
+            if self._check_point_in_rect(pos) and (a * x + b - y > - 20 and a * x + b - y < 20):
                 return True
 
         def _check_point_in_rect(self, pos):
-    #         todo self
+            #         todo self
             return True
 
     def __init__(self, node1, node2):
@@ -29,7 +29,8 @@ class Edge(Sprite):
         self.target = 1
         self.node1 = node1
         self.node2 = node2
-        self.rect = self.myRect(self.node1.rect.center, self.node2.rect.center)
+        self.rect = self.EdgeRect(self.node1.rect.center, self.node2.rect.center)
+        self.weight = None
 
     def draw(self, surface):
         pygame.draw.line(surface, (255, 255, 255), self.node1.rect.center, self.node2.rect.center, 10)

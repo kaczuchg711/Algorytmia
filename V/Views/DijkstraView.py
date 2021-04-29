@@ -5,5 +5,5 @@ class DijkstraView(GraphView):
     pass
 
     def __init__(self, changer):
-        super().__init__()
+        super().__init__(changer)
         self.changer = changer

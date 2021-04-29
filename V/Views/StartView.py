@@ -21,8 +21,7 @@ class StartView(BasicView):
                                 view.changer.change_view("DijkstraView")
 
     def __init__(self, changer):
-        super().__init__()
-        self.changer = changer
+        super().__init__(changer)
         self._init_buttons()
         self.controllers = [self.ClickController()]
 
@@ -30,18 +29,18 @@ class StartView(BasicView):
         self.sprites = [TextButton("Dijkstra", "Dijkstra", screen.rect.centerx - screen.rect.width * 0.2 / 2,
                                    screen.rect.centery - screen.rect.height * 0.1 / 2, screen.rect.width * 0.2,
                                    screen.rect.height * 0.1),
-                        TextButton("cos1", "cos1", screen.rect.centerx - screen.rect.width * 0.2 / 2,
+                        TextButton("algorytm 1", "cos1", screen.rect.centerx - screen.rect.width * 0.2 / 2,
                                    screen.rect.centery - screen.rect.height * 0.1 / 2 + screen.rect.height * 0.15,
                                    screen.rect.width * 0.2,
                                    screen.rect.height * 0.1),
-                        TextButton("cos1", "cos2", screen.rect.centerx - screen.rect.width * 0.2 / 2,
+                        TextButton("algorytm 2", "cos2", screen.rect.centerx - screen.rect.width * 0.2 / 2,
                                    screen.rect.centery - screen.rect.height * 0.1 / 2 + screen.rect.height * 0.3,
                                    screen.rect.width * 0.2,
                                    screen.rect.height * 0.1)]
 
-    def draw_elements(self, surface):
+    def draw_elements(self):
         for element in self.sprites:
-            element.draw(surface)
+            element.draw(self.changer.surface)
             element.update()
 
     def run_controllers(self, event):
