@@ -1,3 +1,5 @@
+from time import sleep
+
 import pygame
 
 from M.Edge import Edge
@@ -16,9 +18,9 @@ class GraphView(BasicView):
             self.lastCreatedEdge = None
             self.numberWasInput = False
             self.numberForSetEdgeWeight = str()
+            self.InputNumberText = None
 
         def __call__(self, event, view):
-            # print("w ClickController")
             # # todo Edge weight
             edgeWasCreatedInThisCirculation = False
             nodes = [sprite for sprite in view.sprites if isinstance(sprite, Node)]
@@ -30,30 +32,31 @@ class GraphView(BasicView):
                         self.firstSelectedNode = node
                     else:
                         self.lastCreatedEdge = Edge(self.firstSelectedNode, node)
-                        view.sprites.append(FreeText("Input edge weight and press Enter", 10, 10))
+                        # todo sometimes the program doesn't print this text
+                        self.InputNumberText = FreeText("Input edge weight and press Enter", 24,
+                                                        screen.rect.centerx - 24 * 7, screen.rect.height * 0.01)
+                        view.sprites.append(self.InputNumberText)
+                        # xd give time to memory for input this var
+                        sleep(0.1)
                         view.sprites.append(self.lastCreatedEdge)
                         self.firstSelectedNode = None
                         edgeWasCreatedInThisCirculation = True
 
                 if self.lastCreatedEdge is not None and self.lastCreatedEdge.weight is None and not edgeWasCreatedInThisCirculation:
                     while self.lastCreatedEdge.weight is None:
-                        print("w petli oczekujacej na wprowadzenie liczby i nacisniecie entera")
+
                         for event in pygame.event.get():
                             if event.type == pygame.KEYDOWN:
                                 if event.key in numeric_keys:
-                                    print("Numeryczny guzik został wciśnięty")
                                     self.numberForSetEdgeWeight += (str(numeric_keys_dict[str(event.key)]))
-                                    print(self.numberForSetEdgeWeight)
                                     self.numberWasInput = True
-                            #
-                            # keys = pygame.key.get_pressed()
                             if event.type == pygame.KEYDOWN and self.numberWasInput and (
                                     event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN):
-                                print("Enter został wciśnięty")
                                 self.lastCreatedEdge.weight = int(self.numberForSetEdgeWeight)
-                                # self.numberForSetEdgeWeight = str()
-                                # self.lastCreatedEdge = None
-                                # self.numberWasInput = True
+                                self.numberForSetEdgeWeight = str()
+                    view.sprites.remove(self.InputNumberText)
+                    self.InputNumberText = None
+                    print(self.lastCreatedEdge.weight)
 
             #
             if event.type == pygame.MOUSEBUTTONDOWN and self.firstSelectedNode is None and not edgeWasCreatedInThisCirculation:

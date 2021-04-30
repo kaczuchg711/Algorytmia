@@ -3,12 +3,13 @@ from pygame.sprite import Sprite
 
 
 class FreeText(Sprite):
-    def __init__(self,text,x,y):
+    def __init__(self,text,size,x,y):
         super().__init__()
         self.text = text
         self.x = x
         self.y = y
-        self.font = pygame.font.SysFont('Times New Roman', 24)
+        self.size = size
+        self.font = pygame.font.SysFont('Times New Roman', size)
 
     def draw(self, surface):
         textsurface = self.font.render(self.text, False, (255, 255, 255))
