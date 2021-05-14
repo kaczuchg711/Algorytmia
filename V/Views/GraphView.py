@@ -21,7 +21,6 @@ class GraphView(BasicView):
             self.InputNumberText = None
 
         def __call__(self, event, view):
-            # # todo Edge weight
             edgeWasCreatedInThisCirculation = False
             nodes = [sprite for sprite in view.sprites if isinstance(sprite, Node)]
 
@@ -56,7 +55,6 @@ class GraphView(BasicView):
                                 self.numberForSetEdgeWeight = str()
                     view.sprites.remove(self.InputNumberText)
                     self.InputNumberText = None
-                    print(self.lastCreatedEdge.weight)
 
             #
             if event.type == pygame.MOUSEBUTTONDOWN and self.firstSelectedNode is None and not edgeWasCreatedInThisCirculation:
@@ -92,6 +90,7 @@ class GraphView(BasicView):
         editButton = ImageButton(editIcon, screen.rect.width - 0.05 * screen.rect.width, 0, 50, 50)
         self.sprites.append(editButton)
         self.isInEditMode = False
+        self.add_start_elements()
 
     def add_element(self, sprite):
         self.sprites.append(sprite)
@@ -106,3 +105,36 @@ class GraphView(BasicView):
     def run_controllers(self, event):
         for controller in self.controllers:
             controller(event, self)
+
+    def add_start_elements(self):
+        nodeA = Node(440, 300)
+        nodeB = Node(750, 300)
+        nodeC = Node(900, 400)
+        nodeD = Node(440, 500)
+        nodeE = Node(750, 500)
+        self.sprites.append(nodeA)
+        self.sprites.append(nodeB)
+        self.sprites.append(nodeC)
+        self.sprites.append(nodeD)
+        self.sprites.append(nodeE)
+        edge1 = Edge(nodeA, nodeB)
+        edge1.weight = 6
+        edge2 = Edge(nodeB, nodeC)
+        edge2.weight = 5
+        edge3 = Edge(nodeA, nodeD)
+        edge3.weight = 1
+        edge4 = Edge(nodeB, nodeE)
+        edge4.weight = 2
+        edge5 = Edge(nodeD, nodeE)
+        edge5.weight = 1
+        edge6 = Edge(nodeE, nodeC)
+        edge6.weight = 5
+        edge7 = Edge(nodeE, nodeC)
+        edge7.weight = 5
+        self.sprites.append(edge1)
+        self.sprites.append(edge2)
+        self.sprites.append(edge3)
+        self.sprites.append(edge4)
+        self.sprites.append(edge5)
+        self.sprites.append(edge6)
+        self.sprites.append(edge7)

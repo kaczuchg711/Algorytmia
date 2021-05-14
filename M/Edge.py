@@ -4,10 +4,10 @@ import pygame
 
 from pygame.sprite import Sprite
 
-
 class Edge(Sprite):
     class EdgeRect(pygame.Rect):
         def __init__(self, pos1, pos2):
+
             self.pos1 = pos1
             self.pos2 = pos2
 
@@ -21,7 +21,7 @@ class Edge(Sprite):
                 return True
 
         def _check_point_in_rect(self, pos):
-            #         todo self
+            #         todo
             return True
 
     def __init__(self, node1, node2):
