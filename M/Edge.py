@@ -7,12 +7,11 @@ from pygame.sprite import Sprite
 class Edge(Sprite):
     class EdgeRect(pygame.Rect):
         def __init__(self, pos1, pos2):
-
             self.pos1 = pos1
             self.pos2 = pos2
 
         def collidepoint(self, pos: tuple, **kwargs):
-            a = (self.pos2[1] - self.pos1[1]) / (self.pos2[0] - self.pos1[0])
+            a = (self.pos2[1] - self.pos1[1]) / (self.pos2[0] - self.pos1[0]) if (self.pos2[0] - self.pos1[0]) else 0
             b = self.pos1[1] - a * self.pos1[0]
             x = pos[0]
             y = pos[1]
@@ -29,6 +28,8 @@ class Edge(Sprite):
         self.target = 1
         self.node1 = node1
         self.node2 = node2
+        node1.edges.append(self)
+        node2.edges.append(self)
         self.rect = self.EdgeRect(self.node1.rect.center, self.node2.rect.center)
         self.weight = None
 

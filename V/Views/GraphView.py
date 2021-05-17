@@ -4,6 +4,7 @@ import pygame
 
 from M.Edge import Edge
 from M.Node import Node
+from M.Graph import Graph
 from V.Views.BasicView import BasicView
 from V.elements.Button import Button
 from V.elements.FreeText import FreeText
@@ -67,6 +68,10 @@ class GraphView(BasicView):
                             self._turn_on_off_edit_mode(view, button)
                     else:
                         self._create_remove_node(event, view, pos)
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_BACKSPACE:
+                    graph = Graph()
+                    view.draw_graph(graph)
 
         def _turn_on_off_edit_mode(self, view, button):
             if view.isInEditMode:
@@ -77,9 +82,9 @@ class GraphView(BasicView):
                 button.image.set_alpha(255)
 
         def _create_remove_node(self, event, view, pos):
-            if event.button == 1 and view.isInEditMode:
+            if event.button == pygame.BUTTON_LEFT and view.isInEditMode:
                 view.add_element(Node(pos[0], pos[1]))
-            elif event.button == 3 and view.isInEditMode:
+            elif event.button == pygame.BUTTON_RIGHT and view.isInEditMode:
                 view.remove_element(pos)
 
     def __init__(self, changer):
@@ -90,7 +95,10 @@ class GraphView(BasicView):
         editButton = ImageButton(editIcon, screen.rect.width - 0.05 * screen.rect.width, 0, 50, 50)
         self.sprites.append(editButton)
         self.isInEditMode = False
-        self.add_start_elements()
+
+        graph = Graph()
+        #self.add_start_elements()
+        self.draw_graph(graph)
 
     def add_element(self, sprite):
         self.sprites.append(sprite)
@@ -105,6 +113,18 @@ class GraphView(BasicView):
     def run_controllers(self, event):
         for controller in self.controllers:
             controller(event, self)
+
+    def draw_graph(self, graph: Graph):
+
+        while len([s for s in self.sprites if isinstance(s, (Edge, Node))]) > 0:
+            for sprite in self.sprites:
+                if isinstance(sprite, (Edge, Node)):
+                    self.sprites.remove(sprite)
+
+        for node in graph.nodes:
+            self.sprites.append(node)
+        for edge in graph.edges:
+            self.sprites.append(edge)
 
     def add_start_elements(self):
         nodeA = Node(440, 300)
@@ -138,3 +158,11 @@ class GraphView(BasicView):
         self.sprites.append(edge5)
         self.sprites.append(edge6)
         self.sprites.append(edge7)
+    def run_algorithm(self):
+        costs = []
+        for node in self.graph.nodes:
+            costs.append((node, None))
+        costs[0] = (costs[0][0], 0)
+
+
+
