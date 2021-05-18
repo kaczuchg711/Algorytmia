@@ -5,7 +5,10 @@ class Graph:
     def __init__(self):
         self.nodes = []
         self.edges = []
+        self.d = []
+        self.p = []
         nodeA = Node(440, 300)
+        nodeA.start = True
         nodeB = Node(750, 300)
         nodeC = Node(900, 400)
         nodeD = Node(440, 500)
@@ -27,8 +30,8 @@ class Graph:
         edge5.weight = 1
         edge6 = Edge(nodeE, nodeC)
         edge6.weight = 5
-        edge7 = Edge(nodeE, nodeC)
-        edge7.weight = 5
+        edge7 = Edge(nodeB, nodeD)
+        edge7.weight = 2
         self.edges.append(edge1)
         self.edges.append(edge2)
         self.edges.append(edge3)
@@ -36,3 +39,6 @@ class Graph:
         self.edges.append(edge5)
         self.edges.append(edge6)
         self.edges.append(edge7)
+        for node in self.nodes:
+            self.p.append(-1)
+            self.d.append(9999999999999999)

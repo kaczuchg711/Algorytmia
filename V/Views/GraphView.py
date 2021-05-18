@@ -70,8 +70,8 @@ class GraphView(BasicView):
                         self._create_remove_node(event, view, pos)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE:
-                    graph = Graph()
-                    view.draw_graph(graph)
+                    view.draw_graph(view.run_algorithm(view.graph))
+                    view.draw_route(view.graph, view.graph.nodes[0], view.graph.nodes[1])
 
         def _turn_on_off_edit_mode(self, view, button):
             if view.isInEditMode:
@@ -96,9 +96,9 @@ class GraphView(BasicView):
         self.sprites.append(editButton)
         self.isInEditMode = False
 
-        graph = Graph()
+        self.graph = Graph()
         #self.add_start_elements()
-        self.draw_graph(graph)
+        self.draw_graph(self.graph)
 
     def add_element(self, sprite):
         self.sprites.append(sprite)
@@ -126,43 +126,57 @@ class GraphView(BasicView):
         for edge in graph.edges:
             self.sprites.append(edge)
 
-    def add_start_elements(self):
-        nodeA = Node(440, 300)
-        nodeB = Node(750, 300)
-        nodeC = Node(900, 400)
-        nodeD = Node(440, 500)
-        nodeE = Node(750, 500)
-        self.sprites.append(nodeA)
-        self.sprites.append(nodeB)
-        self.sprites.append(nodeC)
-        self.sprites.append(nodeD)
-        self.sprites.append(nodeE)
-        edge1 = Edge(nodeA, nodeB)
-        edge1.weight = 6
-        edge2 = Edge(nodeB, nodeC)
-        edge2.weight = 5
-        edge3 = Edge(nodeA, nodeD)
-        edge3.weight = 1
-        edge4 = Edge(nodeB, nodeE)
-        edge4.weight = 2
-        edge5 = Edge(nodeD, nodeE)
-        edge5.weight = 1
-        edge6 = Edge(nodeE, nodeC)
-        edge6.weight = 5
-        edge7 = Edge(nodeE, nodeC)
-        edge7.weight = 5
-        self.sprites.append(edge1)
-        self.sprites.append(edge2)
-        self.sprites.append(edge3)
-        self.sprites.append(edge4)
-        self.sprites.append(edge5)
-        self.sprites.append(edge6)
-        self.sprites.append(edge7)
-    def run_algorithm(self):
-        costs = []
-        for node in self.graph.nodes:
-            costs.append((node, None))
-        costs[0] = (costs[0][0], 0)
 
+    def run_algorithm(self, graph:Graph):
+        def min_value_index():
+            index = 0
+            val = 999999999999999999999
+            for z in range(len(graph.d)):
+                if graph.d[z] < val and graph.nodes[z].visited is not True:
+                    index = z
+                    val = graph.d[index]
+            return index
 
+        def find_node_index(node):
+            for z in range(len(graph.nodes)):
+                if graph.nodes[z] == node:
+                    return z
+
+        #https://eduinf.waw.pl/inf/alg/001_search/0138.php <----- HOW
+        S = []
+        pos = 0
+
+        for x in range(0, len(self.graph.nodes)):
+            if graph.nodes[x].start == True:
+                graph.d[x] = 0
+
+        while len(S) < len(graph.nodes):
+            u = graph.nodes[min_value_index()]
+            S.append(u)
+            u.visited = True
+            for w_edge in u.edges:
+                w = w_edge.node1 if w_edge.node1 != u else w_edge.node2
+                if not S.__contains__(w):
+                    w_index = find_node_index(w)
+                    u_index = find_node_index(u)
+                    if graph.d[w_index] > graph.d[u_index] + w_edge.weight:
+                        graph.d[w_index] = graph.d[u_index] + w_edge.weight
+                        graph.p[w_index] = u_index
+        print("done")
+        return graph
+
+    def draw_route(self,graph, start:Node, end:Node):
+        def find_node_index(node):
+            for z in range(len(graph.nodes)):
+                if graph.nodes[z] == node:
+                    return z
+        c = end
+        p = graph.nodes[find_node_index(end)]
+        while c is not start:
+            if c.edges[0].node1 == p or c.edges[0].node2 == p:
+                c.edges[0].color = (255, 0, 0)
+            else:
+                c.edges[1].color = (255, 0, 0)
+            c = p
+            p = graph.nodes[graph.p[find_node_index(p)]]
 

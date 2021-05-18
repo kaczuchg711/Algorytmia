@@ -25,6 +25,8 @@ class Node(pygame.sprite.Sprite):
         self.radius = 30
         self.rect = pygame.Rect(x - self.radius, y - self.radius, self.radius * 2, self.radius * 2)
         self.edges = []
+        self.start = False
+        self.visited = False
 
     def draw(self, surface):
         myfont = pygame.font.SysFont('Times New Roman', 24)

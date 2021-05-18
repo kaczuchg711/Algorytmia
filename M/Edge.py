@@ -3,12 +3,15 @@ from typing import overload, Union, List, Tuple
 import pygame
 
 from pygame.sprite import Sprite
+from pygame import color
 
 class Edge(Sprite):
+
     class EdgeRect(pygame.Rect):
         def __init__(self, pos1, pos2):
             self.pos1 = pos1
             self.pos2 = pos2
+
 
         def collidepoint(self, pos: tuple, **kwargs):
             a = (self.pos2[1] - self.pos1[1]) / (self.pos2[0] - self.pos1[0]) if (self.pos2[0] - self.pos1[0]) else 0
@@ -32,10 +35,11 @@ class Edge(Sprite):
         node2.edges.append(self)
         self.rect = self.EdgeRect(self.node1.rect.center, self.node2.rect.center)
         self.weight = None
+        self.color = (255, 255, 255)
 
     def draw(self, surface):
         lineSize = 10
-        pygame.draw.line(surface, (255, 255, 255), self.node1.rect.center, self.node2.rect.center, lineSize)
+        pygame.draw.line(surface, self.color, self.node1.rect.center, self.node2.rect.center, lineSize)
         if self.weight is not None:
             font = pygame.font.SysFont('Times New Roman', 24)
             textsurface = font.render(str(self.weight), False, (155, 155, 155))
