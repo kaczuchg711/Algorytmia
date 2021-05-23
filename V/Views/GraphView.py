@@ -71,7 +71,7 @@ class GraphView(BasicView):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE:
                     view.draw_graph(view.run_algorithm(view.graph))
-                    view.draw_route(view.graph, view.graph.nodes[0], view.graph.nodes[1])
+                    view.draw_route(view.graph, view.graph.nodes[0], view.graph.nodes[2])
 
         def _turn_on_off_edit_mode(self, view, button):
             if view.isInEditMode:
@@ -162,16 +162,15 @@ class GraphView(BasicView):
                     if graph.d[w_index] > graph.d[u_index] + w_edge.weight:
                         graph.d[w_index] = graph.d[u_index] + w_edge.weight
                         graph.p[w_index] = u_index
-        print("done")
         return graph
 
-    def draw_route(self,graph, start:Node, end:Node):
+    def draw_route(self, graph: Graph, start: Node, end: Node):
         def find_node_index(node):
             for z in range(len(graph.nodes)):
                 if graph.nodes[z] == node:
                     return z
         c = end
-        p = graph.nodes[find_node_index(end)]
+        p = graph.nodes[graph.p[find_node_index(end)]]
         while c is not start:
             if c.edges[0].node1 == p or c.edges[0].node2 == p:
                 c.edges[0].color = (255, 0, 0)
