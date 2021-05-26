@@ -39,6 +39,11 @@ class Graph:
         self.edges.append(edge5)
         self.edges.append(edge6)
         self.edges.append(edge7)
-        for node in self.nodes:
-            self.p.append(-1)
-            self.d.append(9999999999999999)
+
+    def add_element(self, element):
+        if type(element) is Edge:
+            self.edges.append(element)
+            print("edge")
+        elif type(element) is Node:
+            self.nodes.append(element)
+            print("node")

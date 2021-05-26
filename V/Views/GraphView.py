@@ -15,59 +15,58 @@ from static import screen, numeric_keys, numeric_keys_dict
 class GraphView(BasicView):
     class ClickController:
         def __init__(self):
-            self.firstSelectedNode = None
-            self.lastCreatedEdge = None
+            self.selectedNodes = []
             self.numberWasInput = False
             self.numberForSetEdgeWeight = str()
             self.InputNumberText = None
 
         def __call__(self, event, view):
-            edgeWasCreatedInThisCirculation = False
-            nodes = [sprite for sprite in view.sprites if isinstance(sprite, Node)]
 
-            for node in nodes:
-                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and node.rect.collidepoint(
-                        event.pos) and view.isInEditMode:
-                    if self.firstSelectedNode is None and node is not self.firstSelectedNode:
-                        self.firstSelectedNode = node
-                    else:
-                        self.lastCreatedEdge = Edge(self.firstSelectedNode, node)
-                        # todo sometimes the program doesn't print this text
-                        self.InputNumberText = FreeText("Input edge weight and press Enter", 24,
-                                                        screen.rect.centerx - 24 * 7, screen.rect.height * 0.01)
-                        view.sprites.append(self.InputNumberText)
-                        # xd give time to memory for input this var
-                        sleep(0.1)
-                        view.sprites.append(self.lastCreatedEdge)
-                        self.firstSelectedNode = None
-                        edgeWasCreatedInThisCirculation = True
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and view.isInEditMode:
+                for node in view.graph.nodes:
+                    if node.rect.collidepoint(event.pos):
+                        if node not in self.selectedNodes and len(self.selectedNodes) < 2:
+                            node.selected = True
+                            self.selectedNodes.append(node)
 
-                if self.lastCreatedEdge is not None and self.lastCreatedEdge.weight is None and not edgeWasCreatedInThisCirculation:
-                    while self.lastCreatedEdge.weight is None:
+                        if len(self.selectedNodes) == 2:
+                            # todo sometimes the program doesn't print this text
+                            self.InputNumberText = FreeText("Input edge weight and press Enter", 24,
+                                                            screen.rect.centerx - 24 * 7, screen.rect.height * 0.01)
+                            view.sprites.append(self.InputNumberText)
 
-                        for event in pygame.event.get():
-                            if event.type == pygame.KEYDOWN:
-                                if event.key in numeric_keys:
-                                    self.numberForSetEdgeWeight += (str(numeric_keys_dict[str(event.key)]))
-                                    self.numberWasInput = True
-                            if event.type == pygame.KEYDOWN and self.numberWasInput and (
-                                    event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN):
-                                self.lastCreatedEdge.weight = int(self.numberForSetEdgeWeight)
-                                self.numberForSetEdgeWeight = str()
-                    view.sprites.remove(self.InputNumberText)
-                    self.InputNumberText = None
+            if event.type == pygame.KEYDOWN and self.InputNumberText is not None:
+                if event.key in numeric_keys:
+                    self.numberForSetEdgeWeight += (str(numeric_keys_dict[str(event.key)]))
+                    self.numberWasInput = True
 
-            #
-            if event.type == pygame.MOUSEBUTTONDOWN and self.firstSelectedNode is None and not edgeWasCreatedInThisCirculation:
+            if event.type == pygame.KEYDOWN and self.numberWasInput and (
+                    event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN):
+
+                edge = Edge(self.selectedNodes[0], self.selectedNodes[1])
+                edge.weight = int(self.numberForSetEdgeWeight)
+
+                view.add_element(edge)
+
+                self.numberForSetEdgeWeight = str()
+                view.sprites.remove(self.InputNumberText)
+                self.InputNumberText = None
+                self.numberWasInput = False
+                for node in self.selectedNodes:
+                    node.selected = False
+                self.selectedNodes.clear()
+
+            if event.type == pygame.MOUSEBUTTONDOWN and len(self.selectedNodes) == 0:
                 pos = pygame.mouse.get_pos()
                 buttons = [button for button in view.sprites if isinstance(button, ImageButton)]
 
                 for button in buttons:
-                    if button.rect.collidepoint(event.pos):
-                        if event.button == 1:
-                            self._turn_on_off_edit_mode(view, button)
-                    else:
-                        self._create_remove_node(event, view, pos)
+                    if button.rect.collidepoint(event.pos) and event.button == 1:
+                        self._turn_on_off_edit_mode(view, button)
+                        break
+                else:
+                    self._create_remove_node(event, view, pos)
+
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE:
                     view.draw_graph(view.run_algorithm(view.graph))
@@ -97,11 +96,12 @@ class GraphView(BasicView):
         self.isInEditMode = False
 
         self.graph = Graph()
-        #self.add_start_elements()
+        # self.add_start_elements()
         self.draw_graph(self.graph)
 
-    def add_element(self, sprite):
-        self.sprites.append(sprite)
+    def add_element(self, element):
+        self.graph.add_element(element)
+        self.sprites.append(element)
 
     def remove_element(self, pos):
         clicked_sprites = [s for s in self.sprites if s.rect.collidepoint(pos)]
@@ -126,8 +126,7 @@ class GraphView(BasicView):
         for edge in graph.edges:
             self.sprites.append(edge)
 
-
-    def run_algorithm(self, graph:Graph):
+    def run_algorithm(self, graph: Graph):
         def min_value_index():
             index = 0
             val = 999999999999999999999
@@ -141,10 +140,14 @@ class GraphView(BasicView):
             for z in range(len(graph.nodes)):
                 if graph.nodes[z] == node:
                     return z
+            print("nie znaleziono wierzchołka")
 
-        #https://eduinf.waw.pl/inf/alg/001_search/0138.php <----- HOW
+        # https://eduinf.waw.pl/inf/alg/001_search/0138.php <----- HOW
         S = []
         pos = 0
+        for node in graph.nodes:
+            graph.p.append(-1)
+            graph.d.append(9999999999999999)
 
         for x in range(0, len(self.graph.nodes)):
             if graph.nodes[x].start == True:
@@ -156,7 +159,7 @@ class GraphView(BasicView):
             u.visited = True
             for w_edge in u.edges:
                 w = w_edge.node1 if w_edge.node1 != u else w_edge.node2
-                if not S.__contains__(w):
+                if w not in S:
                     w_index = find_node_index(w)
                     u_index = find_node_index(u)
                     if graph.d[w_index] > graph.d[u_index] + w_edge.weight:
@@ -169,13 +172,12 @@ class GraphView(BasicView):
             for z in range(len(graph.nodes)):
                 if graph.nodes[z] == node:
                     return z
-        c = end
-        p = graph.nodes[graph.p[find_node_index(end)]]
-        while c is not start:
-            if c.edges[0].node1 == p or c.edges[0].node2 == p:
-                c.edges[0].color = (255, 0, 0)
-            else:
-                c.edges[1].color = (255, 0, 0)
-            c = p
-            p = graph.nodes[graph.p[find_node_index(p)]]
 
+        currentNode = end
+        previousNode = graph.nodes[graph.p[find_node_index(end)]]
+        while currentNode is not start:
+            for edge in previousNode.edges:
+                if edge.node1 == currentNode or edge.node2 == currentNode:
+                    edge.color = (255, 0, 0)
+            currentNode = previousNode
+            previousNode = graph.nodes[graph.p[find_node_index(previousNode)]]

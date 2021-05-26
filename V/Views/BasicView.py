@@ -17,6 +17,9 @@ class BasicView:
             element.update()
             element.draw(self.changer.surface)
 
+        # for sprite in self.sprites:
+        #     sprite.update()
+        #     sprite.draw(self.changer.surface)
 
     def run_controllers(self, event):
         pass
