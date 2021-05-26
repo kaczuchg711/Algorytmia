@@ -36,10 +36,16 @@ class Edge(Sprite):
         self.rect = self.EdgeRect(self.node1.rect.center, self.node2.rect.center)
         self.weight = None
         self.color = (255, 255, 255)
+        self.selectedColor = (0,255,0)
+        self.selected = False
 
     def draw(self, surface):
         lineSize = 10
-        pygame.draw.line(surface, self.color, self.node1.rect.center, self.node2.rect.center, lineSize)
+        if self.selected:
+            pygame.draw.line(surface, self.selectedColor, self.node1.rect.center, self.node2.rect.center, lineSize)
+        else:
+            pygame.draw.line(surface, self.color, self.node1.rect.center, self.node2.rect.center, lineSize)
+
         if self.weight is not None:
             font = pygame.font.SysFont('Times New Roman', 24)
             textsurface = font.render(str(self.weight), False, (155, 155, 155))
