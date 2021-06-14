@@ -1,6 +1,3 @@
-import copy
-from time import sleep
-
 import pygame
 
 from M.Edge import Edge
@@ -20,6 +17,9 @@ class GraphView(BasicView):
             self.numberWasInput = False
             self.numberForSetEdgeWeight = str()
             self.InputNumberText = None
+
+            self.dbclock = pygame.time.Clock()  # timmer do podwojengo klikniecia
+            self.DOUBLECLICKTIME = 500  # czas do podwojnego klikniecia
 
         def __call__(self, event, view):
 
@@ -58,14 +58,12 @@ class GraphView(BasicView):
                         node.selected = False
                     self.selectedNodes.clear()
 
-
             else:
-
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_BACKSPACE:
                         view.fill_history()
                         view.draw_graph()
-                        #view.draw_route(view.graph, view.graph.nodes[0], view.graph.nodes[2])
+                        # view.draw_route(view.graph, view.graph.nodes[0], view.graph.nodes[2])
                     elif event.key == pygame.K_LEFT:
                         view.rewind_history()
                     elif event.key == pygame.K_RIGHT:
@@ -80,7 +78,8 @@ class GraphView(BasicView):
                         self._turn_on_off_edit_mode(view, button)
                         break
                 else:
-                    self._create_remove_node(event, view, pos)
+                    if self.dbclock.tick() < self.DOUBLECLICKTIME:
+                        self._create_remove_node(event, view, pos)
 
 
         def _turn_on_off_edit_mode(self, view, button):
@@ -100,7 +99,7 @@ class GraphView(BasicView):
     def __init__(self, changer):
         super().__init__(changer)
         self.controllers = [self.ClickController()]
-        editIcon = pygame.image.load('icons\edit_icon.png').convert_alpha()
+        editIcon = pygame.image.load('icons\\edit_icon.png').convert_alpha()
         editIcon.set_alpha(50)
         editButton = ImageButton(editIcon, screen.rect.width - 0.05 * screen.rect.width, 0, 50, 50)
         self.sprites.append(editButton)
@@ -117,9 +116,12 @@ class GraphView(BasicView):
 
     def remove_element(self, pos):
         clicked_sprites = [s for s in self.sprites if s.rect.collidepoint(pos)]
+        print(clicked_sprites)
         try:
-            self.sprites.remove(clicked_sprites[-1])
-        except(IndexError):
+            element = clicked_sprites[0]
+            self.graphHistory[self.pos].remove_element(element)
+            self.draw_graph()
+        except IndexError:
             pass
 
     def run_controllers(self, event):
@@ -140,18 +142,7 @@ class GraphView(BasicView):
             self.sprites.append(edge)
 
     def fill_history(self):
-
-        while len(self.graphHistory[-1].S) < len(self.graphHistory[0].nodes):
-            print(len(self.graphHistory[0].nodes) - len(self.graphHistory[-1].S))
-            self.graphHistory.append(self.run_algorithm(copy.copy(self.graphHistory[-1])))
-            self.pos += 1
-        self.graphHistory.append(copy.copy(self.graphHistory[-1]))
-        self.pos += 1
-        graph = self.graphHistory[-1]
-        self.draw_route(graph,graph.nodes[0], graph.nodes[-1])
-        for node in self.graphHistory[-1].nodes:
-            for edge in node.edges:
-                edge.selected = False
+        pass
 
     def rewind_history(self):
         if self.pos > 0:
@@ -164,60 +155,28 @@ class GraphView(BasicView):
         self.draw_graph()
 
     def run_algorithm(self, graph: Graph):
-        def min_value_index():
-            index = 0
-            val = 999999999999999999999
-            for z in range(len(graph.d)):
-                if graph.d[z] < val and graph.nodes[z].visited is not True:
-                    index = z
-                    val = graph.d[index]
-            return index
+        pass
+
+    def draw_route(self, graph: Graph, end: Node):
 
         def find_node_index(node):
             for z in range(len(graph.nodes)):
                 if graph.nodes[z] == node:
                     return z
-            print("nie znaleziono wierzchołka")
-
-        # https://eduinf.waw.pl/inf/alg/001_search/0138.php <----- HOW
-        if len(graph.S) == 0:
-            for node in graph.nodes:
-                graph.p.append(-1)
-                graph.d.append(9999999999999999)
-
-            for x in range(0, len(graph.nodes)):
-                if graph.nodes[x].start == True:
-                    graph.d[x] = 0
 
         for node in graph.nodes:
-            for edge in node.edges:
-                edge.selected = False
+            if node.start:
+                start = node
+                break
+        else:
+            print("Error brak startu")
+            return
 
-        if len(graph.S) < len(graph.nodes):
-            u = graph.nodes[min_value_index()]
-            graph.S.append(u)
-            u.visited = True
-            for w_edge in u.edges:
-                w = w_edge.node1 if w_edge.node1 != u else w_edge.node2
+        for node in graph.nodes:
+            node.selected = False
 
-                if w not in graph.S:
-                    w_edge.selected = True
-                    w_index = find_node_index(w)
-                    u_index = find_node_index(u)
-                    if graph.d[w_index] > graph.d[u_index] + w_edge.weight:
-                        graph.d[w_index] = graph.d[u_index] + w_edge.weight
-                        graph.p[w_index] = u_index
-
-        return graph
-
-
-
-
-    def draw_route(self, graph: Graph, start: Node, end: Node):
-        def find_node_index(node):
-            for z in range(len(graph.nodes)):
-                if graph.nodes[z] == node:
-                    return z
+        start.selected = True
+        end.selected = True
 
         currentNode = end
         previousNode = graph.nodes[graph.p[find_node_index(end)]]

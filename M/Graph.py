@@ -64,6 +64,25 @@ class Graph:
             self.nodes.append(element)
             print("node")
 
+    def remove_element(self, element):
+        if type(element) is Edge:
+            print("Del edge")
+            self.edges.remove(element)
+            try:
+                element.node1.edges.remove(element)
+                element.node2.edges.remove(element)
+            except ValueError:
+                pass
+            del element
+        elif type(element) is Node:
+            print("Del node")
+            while len(element.edges):
+                self.remove_element(element.edges[0])
+            element.edges.clear()
+            self.nodes.remove(element)
+            del element
+
+
     def fill(self):
         nodeA = Node(440, 300)
         nodeA.start = True
