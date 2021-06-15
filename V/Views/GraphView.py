@@ -64,8 +64,6 @@ class GraphView(BasicView):
                         node.selected = False
                     self.selectedNodes.clear()
 
-
-
             else:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_BACKSPACE:
@@ -102,26 +100,43 @@ class GraphView(BasicView):
                         self.endSelectMode = True
 
                     elif self.endSelectMode and (pygame.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN):
+                        flag = True
                         for node in view.graphHistory[0].nodes:
                             if node.selected:
                                 n = node
                                 node.selected = False
                                 break
-                        self.endSelectMode = False
-                        view.sprites.remove(self.InputNumberText)
-                        view.fill_history(n)
-                        view.draw_graph()
+                        else:
+                            flag = False
+                        if flag:
+                            self.endSelectMode = False
+                            self.endSelected = True
+                            view.sprites.remove(self.InputNumberText)
+                            view.fill_history(n)
+                            view.draw_graph()
 
             if self.startSelectMode or self.endSelectMode:
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                    print("ESC!")
+                    for node in view.graphHistory[view.pos].nodes:
+                        node.start = False
+                        node.selected = False
+                    print("ESC!")
+                    self.startSelected = False
+                    self.endSelected = False
+                    self.endSelectMode = False
+                    self.startSelectMode = False
+                    view.sprites.remove(self.InputNumberText)
+
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     for node in view.graphHistory[view.pos].nodes:
                         node.selected = False
 
                     for node in view.graphHistory[view.pos].nodes:
                         if node.rect.collidepoint(event.pos):
-                            if node not in self.selectedNodes and len(self.selectedNodes) < 2:
-                                node.selected = True
-            if event.type == pygame.MOUSEBUTTONDOWN and len(self.selectedNodes) == 0:
+                            node.selected = True
+
+            elif not self.endSelected and event.type == pygame.MOUSEBUTTONDOWN and len(self.selectedNodes) == 0:
                 pos = pygame.mouse.get_pos()
                 buttons = [button for button in view.sprites if isinstance(button, ImageButton)]
 
