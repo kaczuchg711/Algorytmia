@@ -14,7 +14,7 @@ class Node(pygame.sprite.Sprite):
         cls.counter += 1
         if cls.counter == 22:
             cls.counter = 0
-            cls.second_counter +=1
+            cls.second_counter += 1
 
     def __init__(self, x, y):
         super().__init__()

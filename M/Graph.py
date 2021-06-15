@@ -86,10 +86,9 @@ class Graph:
             del element
 
     def fill(self):
-        x = random.randint(0, 3)
-        # self.o1()
-        self.o2()
-        # self.o3()
+        x = random.randint(0, 2)
+        graphs = [self.o1, self.o3, self.o3]
+        graphs[x]()
 
     def o1(self):
         nodeA = Node(440, 300)
@@ -167,3 +166,34 @@ class Graph:
         self.edges.append(edge8)
         self.edges.append(edge9)
 
+    def o3(self):
+        nodeA = Node(800, 800)
+        nodeB = Node(800, 600)
+        nodeC = Node(600, 500)
+        nodeD = Node(1000, 500)
+        nodeE = Node(800, 400)
+        self.nodes.append(nodeA)
+        self.nodes.append(nodeB)
+        self.nodes.append(nodeC)
+        self.nodes.append(nodeD)
+        self.nodes.append(nodeE)
+
+        edge1 = Edge(nodeA, nodeB)
+        edge1.weight = 1
+        edge2 = Edge(nodeB, nodeC)
+        edge2.weight = 1
+        edge3 = Edge(nodeC, nodeE)
+        edge3.weight = 1
+        edge4 = Edge(nodeD, nodeE)
+        edge4.weight = 1
+        edge5 = Edge(nodeE, nodeB)
+        edge5.weight = 1
+        edge6 = Edge(nodeD, nodeB)
+        edge6.weight = 1
+
+        self.edges.append(edge1)
+        self.edges.append(edge2)
+        self.edges.append(edge3)
+        self.edges.append(edge4)
+        self.edges.append(edge5)
+        self.edges.append(edge6)

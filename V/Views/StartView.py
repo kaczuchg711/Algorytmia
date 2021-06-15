@@ -11,19 +11,14 @@ class StartView(BasicView):
     class ClickController:
         def __call__(self, event, view):
             if event.type == pygame.MOUSEBUTTONUP:
-                for sprite in view.sprites:
-                    x, y = event.pos
-                    try:
-                        if sprite.rect.collidepoint(x, y):
-                            if sprite.text == "Dijkstra":
-                                try:
-                                    view.changer.change_view("DijkstraView")
-                                except KeyError:
-                                    view.changer.views["DijkstraView"] = DijkstraView(view.changer)
-                                    view.changer.change_view("DijkstraView")
-                    except AttributeError:
-                        pass
-
+                for sprite in [s for s in view.sprites if not isinstance(s, FreeText) and s.rect.collidepoint(event.pos)]:
+                    if sprite.text == "Dijkstra":
+                        try:
+                            view.changer.change_view("DijkstraView")
+                        except KeyError:
+                            view.changer.views["DijkstraView"] = DijkstraView(view.changer)
+                            view.changer.change_view("DijkstraView")
+                    break
 
     def __init__(self, changer):
         super().__init__(changer)
