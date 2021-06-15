@@ -1,5 +1,6 @@
 import pygame
 
+from V.elements.FreeText import FreeText
 from V.elements.TextButton import TextButton
 from V.Views.BasicView import BasicView
 from V.Views.DijkstraView import DijkstraView
@@ -26,16 +27,15 @@ class StartView(BasicView):
         self.controllers = [self.ClickController()]
 
     def _init_buttons(self):
-        self.sprites = [TextButton("Dijkstra", "Dijkstra", screen.rect.centerx - screen.rect.width * 0.2 / 2,
+
+        self.sprites = [FreeText("Algorytmia", int(screen.rect.height * 0.2),
+                                 screen.rect.centerx - (screen.rect.height * 0.2) * 4.9/ 2,
+                                 screen.rect.centery - screen.rect.height * 0.9 / 2),
+                        FreeText("Wizualizator algorytmów", int(screen.rect.height * 0.05),
+                                 screen.rect.centerx - screen.rect.width * 0.30/ 2,
+                                 screen.rect.centery - screen.rect.height * 0.3 / 2),
+                        TextButton("Dijkstra", "Dijkstra", screen.rect.centerx - screen.rect.width * 0.2 / 2,
                                    screen.rect.centery - screen.rect.height * 0.1 / 2, screen.rect.width * 0.2,
-                                   screen.rect.height * 0.1),
-                        TextButton("algorytm 1", "cos1", screen.rect.centerx - screen.rect.width * 0.2 / 2,
-                                   screen.rect.centery - screen.rect.height * 0.1 / 2 + screen.rect.height * 0.15,
-                                   screen.rect.width * 0.2,
-                                   screen.rect.height * 0.1),
-                        TextButton("algorytm 2", "cos2", screen.rect.centerx - screen.rect.width * 0.2 / 2,
-                                   screen.rect.centery - screen.rect.height * 0.1 / 2 + screen.rect.height * 0.3,
-                                   screen.rect.width * 0.2,
                                    screen.rect.height * 0.1)]
 
     def draw_elements(self):
