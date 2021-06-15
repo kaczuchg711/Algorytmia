@@ -177,6 +177,10 @@ class GraphView(BasicView):
         # self.add_start_elements()
         self.draw_graph()
 
+        # self.legend = FreeText("BACKSPACE - wykonaj algorytm | <- - przewiń do tyłu historię | -> - przewiń do przodu historie ", 16,
+        #                                 screen.rect.centerx - 24 * 7, screen.rect.height - 20)
+        # self.sprites.append(self.legend)
+
     def add_element(self, element):
         self.graphHistory[self.pos].add_element(element)
         self.sprites.append(element)
@@ -208,6 +212,10 @@ class GraphView(BasicView):
         for edge in graph.edges:
             self.sprites.append(edge)
         self.draw_extra_info()
+        legend = FreeText("BACKSPACE - wykonaj algorytm | <- - przewiń do tyłu historię | -> - przewiń do przodu historie ", 16,
+                               screen.rect.centerx - 24 * 7, screen.rect.height - 20)
+        self.sprites.append(legend)
+
 
     def draw_extra_info(self):
         pass
