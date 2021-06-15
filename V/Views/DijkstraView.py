@@ -1,4 +1,5 @@
 from V.Views.GraphView import GraphView
+from V.elements.FreeText import FreeText
 from M.Edge import Edge
 from M.Node import Node
 from M.Graph import Graph
@@ -60,7 +61,13 @@ class DijkstraView(GraphView):
 
         return graph
 
-    def fill_history(self):
+    def fill_history(self, end: Node):
+        def find_node_index(n):
+            graph = self.graphHistory[1]
+            for z in range(len(graph.nodes)):
+                if graph.nodes[z].myEq(n):
+                    return z
+            print("nie znaleziono wierzchołka")
 
         while len(self.graphHistory[-1].S) < len(self.graphHistory[0].nodes):
             print(len(self.graphHistory[0].nodes) - len(self.graphHistory[-1].S))
@@ -69,7 +76,63 @@ class DijkstraView(GraphView):
         self.graphHistory.append(copy.copy(self.graphHistory[-1]))
         self.pos += 1
         graph = self.graphHistory[-1]
-        self.draw_route(graph, graph.nodes[-1])
+
+        self.draw_route(graph, graph.nodes[find_node_index(end)])
         for node in self.graphHistory[-1].nodes:
             for edge in node.edges:
                 edge.selected = False
+
+    def draw_extra_info(self):
+        while len([s for s in self.sprites if isinstance(s, FreeText)]) > 0:
+            for sprite in self.sprites:
+                if isinstance(sprite, FreeText):
+                    self.sprites.remove(sprite)
+
+        Textbox = FreeText("Odległości:", 20,10,10)
+        self.sprites.append(Textbox)
+        text = ""
+        graph = self.graphHistory[self.pos]
+        for i in range(len(graph.d)):
+            if(graph.d[i]==9999999999999999):
+                tmp = "inf"
+            else:
+                tmp = str(graph.d[i])
+            text += graph.nodes[i].name + " | " + tmp + " || "
+
+        Textbox = FreeText(text, 20,10,40)
+        self.sprites.append(Textbox)
+
+        Textbox = FreeText("Poprzednicy:", 20,10,70)
+        self.sprites.append(Textbox)
+        text = ""
+        graph = self.graphHistory[self.pos]
+        for i in range(len(graph.p)):
+            if(graph.p[i]==-1):
+                tmp = "-"
+            else:
+                tmp = graph.nodes[graph.p[i]].name
+            text +=  tmp + " <- " + graph.nodes[i].name + " || "
+
+        Textbox = FreeText(text, 20,10,100)
+        self.sprites.append(Textbox)
+
+        self.draw_S()
+
+    def draw_S(self):
+        y = 200
+        x = 50
+        Text = FreeText("Odwiedzone wierzchołki:", 20,10,130)
+        self.sprites.append(Text)
+        screen_h = self.changer.surface.get_height() - 70
+        for node in self.graphHistory[self.pos].S:
+            if(y > screen_h):
+                x += 65
+                y = 200
+            new_node: Node = copy.copy(node)
+            new_node.x = x
+            new_node.y = y
+            #new_node.selected = False
+            new_node.update_rect()
+            self.sprites.append(new_node)
+            y += 65
+

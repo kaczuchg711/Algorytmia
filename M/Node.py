@@ -40,6 +40,9 @@ class Node(pygame.sprite.Sprite):
         new.selected = self.selected
         return new
 
+    def update_rect(self):
+        self.rect.update(self.x - self.radius, self.y - self.radius, self.radius * 2, self.radius * 2)
+
     def draw(self, surface):
         myfont = pygame.font.SysFont('Times New Roman', 24)
         textSurface = myfont.render(self.name, False, (0, 0, 0))

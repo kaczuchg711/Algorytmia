@@ -21,10 +21,16 @@ class GraphView(BasicView):
             self.dbclock = pygame.time.Clock()  # timmer do podwojengo klikniecia
             self.DOUBLECLICKTIME = 500  # czas do podwojnego klikniecia
 
+            self.startSelectMode = False
+            self.startSelected = False
+            self.endSelectMode = False
+            self.endSelected = False
+
+
         def __call__(self, event, view):
 
             if view.isInEditMode:
-                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and view.isInEditMode:
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     for node in view.graphHistory[view.pos].nodes:
                         if node.rect.collidepoint(event.pos):
                             if node not in self.selectedNodes and len(self.selectedNodes) < 2:
@@ -33,7 +39,7 @@ class GraphView(BasicView):
 
                             if len(self.selectedNodes) == 2:
                                 # todo sometimes the program doesn't print this text
-                                self.InputNumberText = FreeText("Input edge weight and press Enter", 24,
+                                self.InputNumberText = FreeText("Podaj wagę krawędzi i naciśnij Enter", 24,
                                                                 screen.rect.centerx - 24 * 7, screen.rect.height * 0.01)
                                 view.sprites.append(self.InputNumberText)
 
@@ -58,17 +64,63 @@ class GraphView(BasicView):
                         node.selected = False
                     self.selectedNodes.clear()
 
+
+
             else:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_BACKSPACE:
-                        view.fill_history()
-                        view.draw_graph()
+                        for node in view.graphHistory[0].nodes:
+                            if node.start:
+                                break
+                        else:
+                            #view.sprites.remove(self.InputNumberText)
+                            self.InputNumberText = FreeText("Wskarz Start i naciśnij Enter", 24,
+                                                            screen.rect.centerx - 24 * 7, screen.rect.height * 0.01)
+                            view.sprites.append(self.InputNumberText)
+                            self.startSelectMode = True
+
+                        if self.startSelected and self.endSelected:
+                            view.fill_history()
+                            view.draw_graph()
                         # view.draw_route(view.graph, view.graph.nodes[0], view.graph.nodes[2])
                     elif event.key == pygame.K_LEFT:
                         view.rewind_history()
                     elif event.key == pygame.K_RIGHT:
                         view.fast_forward_history()
 
+                    elif self.startSelectMode and (pygame.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN):
+                        for node in view.graphHistory[0].nodes:
+                            if node.selected:
+                                node.start = True
+                                node.selected = False
+                                break
+                        self.startSelectMode = False
+                        view.sprites.remove(self.InputNumberText)
+                        self.InputNumberText = FreeText("Wskarz Koniec i naciśnij Enter", 24,
+                                                        screen.rect.centerx - 24 * 7, screen.rect.height * 0.01)
+                        view.sprites.append(self.InputNumberText)
+                        self.endSelectMode = True
+
+                    elif self.endSelectMode and (pygame.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN):
+                        for node in view.graphHistory[0].nodes:
+                            if node.selected:
+                                n = node
+                                node.selected = False
+                                break
+                        self.endSelectMode = False
+                        view.sprites.remove(self.InputNumberText)
+                        view.fill_history(n)
+                        view.draw_graph()
+
+            if self.startSelectMode or self.endSelectMode:
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    for node in view.graphHistory[view.pos].nodes:
+                        node.selected = False
+
+                    for node in view.graphHistory[view.pos].nodes:
+                        if node.rect.collidepoint(event.pos):
+                            if node not in self.selectedNodes and len(self.selectedNodes) < 2:
+                                node.selected = True
             if event.type == pygame.MOUSEBUTTONDOWN and len(self.selectedNodes) == 0:
                 pos = pygame.mouse.get_pos()
                 buttons = [button for button in view.sprites if isinstance(button, ImageButton)]
@@ -115,7 +167,7 @@ class GraphView(BasicView):
         self.sprites.append(element)
 
     def remove_element(self, pos):
-        clicked_sprites = [s for s in self.sprites if s.rect.collidepoint(pos)]
+        clicked_sprites = [s for s in self.sprites if  not isinstance(s, FreeText) and s.rect.collidepoint(pos)]
         print(clicked_sprites)
         try:
             element = clicked_sprites[0]
@@ -140,8 +192,12 @@ class GraphView(BasicView):
             self.sprites.append(node)
         for edge in graph.edges:
             self.sprites.append(edge)
+        self.draw_extra_info()
 
-    def fill_history(self):
+    def draw_extra_info(self):
+        pass
+
+    def fill_history(self, end: Node):
         pass
 
     def rewind_history(self):

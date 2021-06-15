@@ -85,7 +85,7 @@ class Graph:
 
     def fill(self):
         nodeA = Node(440, 300)
-        nodeA.start = True
+        #nodeA.start = True
         nodeB = Node(750, 300)
         nodeC = Node(900, 400)
         nodeD = Node(440, 500)
