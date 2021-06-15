@@ -86,7 +86,7 @@ class Graph:
             del element
 
     def fill(self):
-        x = random.randint(0, 5)
+        x = random.randint(0, 3)
         # self.o1()
         self.o2()
         # self.o3()
@@ -125,14 +125,13 @@ class Graph:
         self.edges.append(edge7)
 
     def o2(self):
-
         nodeA = Node(400, 400)
         nodeB = Node(800, 400)
         nodeC = Node(1200, 400)
         nodeD = Node(800, 600)
         nodeE = Node(800, 200)
         nodeF = Node(600, 300)
-        nodeG = Node(1000, 500)
+        nodeG = Node(1000, 600)
         self.nodes.append(nodeA)
         self.nodes.append(nodeB)
         self.nodes.append(nodeC)
@@ -148,23 +147,16 @@ class Graph:
         edge3.weight = 1
         edge4 = Edge(nodeB, nodeE)
         edge4.weight = 2
-        edge5 = Edge(nodeD, nodeE)
+        edge5 = Edge(nodeD, nodeB)
         edge5.weight = 1
-        edge6 = Edge(nodeE, nodeC)
-        edge6.weight = 5
-        edge8 = Edge(nodeA, nodeF)
+        edge6 = Edge(nodeF, nodeE)
+        edge6.weight = 1
+        edge7 = Edge(nodeA, nodeF)
+        edge7.weight = 2
+        edge8 = Edge(nodeB, nodeG)
         edge8.weight = 2
-        edge9 = Edge(nodeF, nodeE)
-        edge9.weight = 4
-        edge10 = Edge(nodeA, nodeF)
-        edge10.weight = 6
-        edge11 = Edge(nodeF, nodeE)
-        edge11.weight = 1
-        edge12 = Edge(nodeD, nodeG)
-        edge12.weight = 5
-        edge13 = Edge(nodeG, nodeC)
-        edge13.weight = 10
-
+        edge9 = Edge(nodeG, nodeC)
+        edge9.weight = 5
         self.edges.append(edge1)
         self.edges.append(edge2)
         self.edges.append(edge3)
@@ -174,7 +166,4 @@ class Graph:
         self.edges.append(edge7)
         self.edges.append(edge8)
         self.edges.append(edge9)
-        self.edges.append(edge10)
-        self.edges.append(edge11)
-        self.edges.append(edge12)
-        self.edges.append(edge13)
+
