@@ -13,13 +13,17 @@ class StartView(BasicView):
             if event.type == pygame.MOUSEBUTTONUP:
                 for sprite in view.sprites:
                     x, y = event.pos
-                    if sprite.rect.collidepoint(x, y):
-                        if sprite.text == "Dijkstra":
-                            try:
-                                view.changer.change_view("DijkstraView")
-                            except KeyError:
-                                view.changer.views["DijkstraView"] = DijkstraView(view.changer)
-                                view.changer.change_view("DijkstraView")
+                    try:
+                        if sprite.rect.collidepoint(x, y):
+                            if sprite.text == "Dijkstra":
+                                try:
+                                    view.changer.change_view("DijkstraView")
+                                except KeyError:
+                                    view.changer.views["DijkstraView"] = DijkstraView(view.changer)
+                                    view.changer.change_view("DijkstraView")
+                    except AttributeError:
+                        pass
+
 
     def __init__(self, changer):
         super().__init__(changer)
