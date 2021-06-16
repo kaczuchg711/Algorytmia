@@ -87,7 +87,7 @@ class Graph:
 
     def fill(self):
         x = random.randint(0, 2)
-        graphs = [self.o1, self.o3, self.o3]
+        graphs = [self.o1, self.o2, self.o3]
         graphs[x]()
 
     def o1(self):
