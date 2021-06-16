@@ -71,7 +71,7 @@ class Edge(Sprite):
 
             font = pygame.font.SysFont('Times New Roman', 24)
 
-            textsurface = font.render(str(self.weight), False, (0, 200, 255))
+            textsurface = font.render(str(self.weight), False, (255, 0, 0))
             TextLeftRightCor = (
             (self.rect.pos1[0] + self.rect.pos2[0]) / 2 - font.get_height() * 0.1, (self.rect.pos1[1] + self.rect.pos2[1]) / 2 - lineSize * 3 + font.get_height() * 0.70)
             pygame.draw.ellipse(surface, (160,160,160),pygame.Rect((TextLeftRightCor[0] - 8,TextLeftRightCor[1]), (len(str(self.weight))* 18 + 10, 24)))

@@ -26,9 +26,7 @@ class GraphView(BasicView):
             self.endSelectMode = False
             self.endSelected = False
 
-
         def __call__(self, event, view):
-
             if view.isInEditMode:
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     for node in view.graphHistory[view.pos].nodes:
